@@ -6,12 +6,7 @@ import Link from 'next/link';
 import { Phone, Calendar, Menu, X, ChevronDown, MapPin, Clock } from 'lucide-react';
 import { ThemeSwitch } from '@/components/ThemeSwitch';
 
-// Brand Colors: Magenta #C2185B, Turquoise #40C4B4, Gold #D4AF37
-// Fonts: Montserrat headings, Lora body text
-
-interface StickyHeaderProps {
-  className?: string;
-}
+interface StickyHeaderProps { className?: string; }
 
 export default function StickyHeader({ className = '' }: StickyHeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,29 +26,21 @@ export default function StickyHeader({ className = '' }: StickyHeaderProps) {
 
   const navigationItems = [
     { name: 'Home', href: '/' },
-    {
-      name: 'About',
-      href: '/about',
-      dropdown: [
-        { name: 'Our Practice', href: '/about' },
-        { name: 'Our Team', href: '/team' },
-        { name: 'Technology', href: '/3d-showcase' },
-        { name: 'Patient Stories', href: '/patient-stories' },
-      ],
-    },
-    {
-      name: 'Treatments',
-      href: '/treatments',
-      dropdown: [
-        { name: 'All Treatments', href: '/treatments' },
-        { name: '3D Digital Dentistry', href: '/treatments/3d-dentistry' },
-        { name: 'Porcelain Veneers', href: '/treatments/veneers' },
-        { name: 'Dental Implants', href: '/treatments/implants' },
-        { name: 'Teeth Whitening', href: '/treatments/whitening' },
-        { name: 'Emergency Dentist', href: '/emergency-dentist' },
-        { name: 'Anxiety Dentistry', href: '/anxiety-dentistry' },
-      ],
-    },
+    { name: 'About', href: '/about', dropdown: [
+      { name: 'Our Practice', href: '/about' },
+      { name: 'Our Team', href: '/team' },
+      { name: 'Technology', href: '/3d-showcase' },
+      { name: 'Patient Stories', href: '/patient-stories' },
+    ]},
+    { name: 'Treatments', href: '/treatments', dropdown: [
+      { name: 'All Treatments', href: '/treatments' },
+      { name: '3D Digital Dentistry', href: '/treatments/3d-dentistry' },
+      { name: 'Porcelain Veneers', href: '/treatments/veneers' },
+      { name: 'Dental Implants', href: '/treatments/implants' },
+      { name: 'Teeth Whitening', href: '/treatments/whitening' },
+      { name: 'Emergency Dentist', href: '/emergency-dentist' },
+      { name: 'Anxiety Dentistry', href: '/anxiety-dentistry' },
+    ]},
     { name: 'Team', href: '/team' },
     { name: 'Patient Stories', href: '/patient-stories' },
     { name: 'Blog', href: '/blog' },
@@ -69,18 +56,9 @@ export default function StickyHeader({ className = '' }: StickyHeaderProps) {
         className="bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 text-center text-sm relative z-50"
       >
         <div className="flex items-center justify-center gap-4">
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4" />
-            <span style={{ fontFamily: 'Montserrat, sans-serif' }}>Emergency: 01273 453109</span>
-          </div>
-          <div className="hidden md:flex items-center gap-2">
-            <MapPin className="w-4 h-4" />
-            <span style={{ fontFamily: 'Lora, serif' }}>Shoreham-by-Sea, West Sussex</span>
-          </div>
-          <div className="hidden lg:flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            <span style={{ fontFamily: 'Lora, serif' }}>24/7 Emergency Care</span>
-          </div>
+          <div className="flex items-center gap-2"><Phone className="w-4 h-4" /><span>Emergency: 01273 453109</span></div>
+          <div className="hidden md:flex items-center gap-2"><MapPin className="w-4 h-4" /><span>Shoreham-by-Sea, West Sussex</span></div>
+          <div className="hidden lg:flex items-center gap-2"><Clock className="w-4 h-4" /><span>24/7 Emergency Care</span></div>
         </div>
       </motion.div>
 
@@ -99,17 +77,11 @@ export default function StickyHeader({ className = '' }: StickyHeaderProps) {
             <motion.div style={{ scale: logoScale }} className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-teal-500 flex items-center justify-center">
-                  <span className="text-white font-bold text-lg" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                    SMH
-                  </span>
+                  <span className="text-white font-bold text-lg">SMH</span>
                 </div>
                 <div className="hidden sm:block">
-                  <h1 className="text-lg font-bold text-slate-800 dark:text-slate-100" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                    St Mary's House
-                  </h1>
-                  <p className="text-sm text-slate-600 dark:text-slate-300" style={{ fontFamily: 'Lora, serif' }}>
-                    Dental Care
-                  </p>
+                  <h1 className="text-lg font-bold text-slate-800 dark:text-slate-100">St Mary&apos;s House</h1>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">Dental Care</p>
                 </div>
               </Link>
             </motion.div>
@@ -125,14 +97,12 @@ export default function StickyHeader({ className = '' }: StickyHeaderProps) {
                 >
                   <Link
                     href={item.href}
-                    className="flex items-center gap-1 text-slate-700 dark:text-slate-200 hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 font-medium"
-                    style={{ fontFamily: 'Montserrat, sans-serif' }}
+                    className="flex items-center gap-1 text-slate-700 dark:text-slate-200 hover:text-pink-600 dark:hover:text-pink-400 transition-colors font-medium"
                   >
                     <span>{item.name}</span>
                     {item.dropdown && <ChevronDown className="w-4 h-4" />}
                   </Link>
 
-                  {/* Dropdown */}
                   <AnimatePresence>
                     {item.dropdown && activeDropdown === item.name && (
                       <motion.div
@@ -146,8 +116,7 @@ export default function StickyHeader({ className = '' }: StickyHeaderProps) {
                           <Link
                             key={dd.name}
                             href={dd.href}
-                            className="block px-4 py-3 text-slate-700 dark:text-slate-200 hover:text-pink-600 dark:hover:text-pink-400 hover:bg-pink-50/50 dark:hover:bg-white/5 transition-all duration-200"
-                            style={{ fontFamily: 'Lora, serif' }}
+                            className="block px-4 py-3 text-slate-700 dark:text-slate-200 hover:text-pink-600 dark:hover:text-pink-400 hover:bg-pink-50/50 dark:hover:bg-white/5 transition-all"
                           >
                             {dd.name}
                           </Link>
@@ -162,40 +131,27 @@ export default function StickyHeader({ className = '' }: StickyHeaderProps) {
             {/* CTA cluster + Theme switch */}
             <div className="hidden md:flex items-center gap-3">
               <ThemeSwitch />
-              <motion.a
+              <a
                 href="tel:01273453109"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-700 dark:text-slate-100 rounded-full border border-slate-300/60 dark:border-slate-600"
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-700 dark:text-slate-100 border border-slate-300/60 dark:border-slate-600"
               >
                 <Phone className="w-4 h-4" />
-                <span className="font-medium" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                  Call Now
-                </span>
-              </motion.a>
-
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-pink-500 to-teal-500 text-white rounded-full shadow-lg"
-              >
+                <span className="font-medium">Call Now</span>
+              </a>
+              <button className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-pink-500 to-teal-500 text-white rounded-full shadow-lg">
                 <Calendar className="w-4 h-4" />
-                <span className="font-medium" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                  Book Free Consultation
-                </span>
-              </motion.button>
+                <span className="font-medium">Book Free Consultation</span>
+              </button>
             </div>
 
-            {/* Mobile menu button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            {/* Mobile menu toggle */}
+            <button
               onClick={() => setIsMobileMenuOpen((v) => !v)}
               className="lg:hidden p-2 rounded-lg bg-gradient-to-r from-pink-500 to-teal-500 text-white"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </motion.button>
+            </button>
           </div>
         </div>
 
@@ -215,8 +171,7 @@ export default function StickyHeader({ className = '' }: StickyHeaderProps) {
                     <Link
                       href={item.href}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="block py-2 text-slate-700 dark:text-slate-200 hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200 font-medium"
-                      style={{ fontFamily: 'Montserrat, sans-serif' }}
+                      className="block py-2 text-slate-700 dark:text-slate-200 hover:text-pink-600 dark:hover:text-pink-400 font-medium"
                     >
                       {item.name}
                     </Link>
@@ -227,8 +182,7 @@ export default function StickyHeader({ className = '' }: StickyHeaderProps) {
                             key={dd.name}
                             href={dd.href}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="block py-1 text-sm text-slate-600 dark:text-slate-300 hover:text-pink-600 dark:hover:text-pink-400 transition-colors duration-200"
-                            style={{ fontFamily: 'Lora, serif' }}
+                            className="block py-1 text-sm text-slate-600 dark:text-slate-300 hover:text-pink-600 dark:hover:text-pink-400"
                           >
                             {dd.name}
                           </Link>
@@ -237,34 +191,20 @@ export default function StickyHeader({ className = '' }: StickyHeaderProps) {
                     )}
                   </div>
                 ))}
-
-                {/* Mobile CTAs */}
+                {/* Mobile CTAs + Theme */}
                 <div className="pt-4 space-y-3">
-                  <motion.a
+                  <a
                     href="tel:01273453109"
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-700 dark:text-slate-100 rounded-full"
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-full bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 text-slate-700 dark:text-slate-100"
                   >
                     <Phone className="w-4 h-4" />
-                    <span className="font-medium" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                      Call Now
-                    </span>
-                  </motion.a>
-
-                  <motion.button
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-pink-500 to-teal-500 text-white rounded-full"
-                  >
+                    <span className="font-medium">Call Now</span>
+                  </a>
+                  <button className="flex items-center justify-center gap-2 w-full py-3 rounded-full bg-gradient-to-r from-pink-500 to-teal-500 text-white">
                     <Calendar className="w-4 h-4" />
-                    <span className="font-medium" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                      Book Free Consultation
-                    </span>
-                  </motion.button>
-
-                  {/* Light/Ink toggle in mobile menu too */}
-                  <div className="flex justify-center pt-2">
-                    <ThemeSwitch />
-                  </div>
+                    <span className="font-medium">Book Free Consultation</span>
+                  </button>
+                  <div className="flex justify-center"><ThemeSwitch /></div>
                 </div>
               </div>
             </motion.div>
