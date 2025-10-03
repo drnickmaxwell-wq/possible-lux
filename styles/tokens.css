@@ -1,0 +1,27 @@
+/* Light / Ink theme tokens */
+:root {
+  --bg: #ffffff;
+  --fg: #0b1220;
+  --muted: #6b7280;
+  --brand-magenta: #C2185B;
+  --brand-turquoise: #40C4B4;
+  --brand-gold: #D4AF37;
+  --card: rgba(255,255,255,0.72);
+  --glass: rgba(255,255,255,0.5);
+  --ring: 24, 160, 147;
+}
+:root.dark {
+  --bg: #0b1220;
+  --fg: #e7ecf3;
+  --muted: #9aa4b2;
+  --card: rgba(12,18,32,0.6);
+  --glass: rgba(12,18,32,0.4);
+  --ring: 192, 241, 236;
+}
+.lux-surface { background: var(--bg); color: var(--fg); }
+.lux-card { background: var(--card); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); }
+.lux-button { border-radius: 14px; padding: 0.75rem 1.1rem; font-weight: 600; }
+.lux-button--primary { background: linear-gradient(135deg, var(--brand-magenta), var(--brand-turquoise)); color: white; }
+.lux-shimmer { position: relative; overflow: hidden; }
+.lux-shimmer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.25), transparent); transform: translateX(-100%); animation: lux-shine 2.2s infinite; }
+@keyframes lux-shine { to { transform: translateX(100%); } }
