@@ -1,12 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { z, ZodError } from 'zod';
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+export const runtime = 'nodejs';
 
-// Dental practice context and personality
+/* ------------------------- Lazy OpenAI initialiser ------------------------- */
+// Instantiate the client *inside* handlers so build/import doesn’t crash if the
+// key isn’t present during “collect page data”.
+function getOpenAI() {
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) throw new Error('OPENAI_API_KEY missing');
+  return new OpenAI({ apiKey: key });
+}
+
+/* -------------------- Dental practice context (UNCHANGED) ------------------ */
 const SYSTEM_PROMPT = `You are Dr. Sarah, the AI assistant for St Mary's House Dental Care, a luxury coastal dental practice in Shoreham-by-Sea. You are warm, professional, knowledgeable, and empathetic.
 
 PRACTICE INFORMATION:
@@ -46,21 +53,37 @@ BOOKING ASSISTANCE:
 
 Remember: You represent a premium dental practice that prioritizes patient comfort, advanced technology, and beautiful coastal surroundings.`;
 
+/* ----------------------------- Request typing ------------------------------ */
+// Ensures messages are never `unknown` and supports tool messages if you add tools.
+const roleEnum = z.enum(['system', 'user', 'assistant', 'tool']);
+const messageSchema = z.object({
+  role: roleEnum,
+  content: z.string(),
+  // OpenAI expects tool_call_id on tool messages; optional if not used
+  tool_call_id: z.string().optional(),
+});
+const emotionSchema = z.object({
+  dominant: z.string(),
+  confidence: z.number(),
+}).optional();
+const requestSchema = z.object({
+  messages: z.array(messageSchema),
+  userEmotion: emotionSchema,
+});
+type ReqBody = z.infer<typeof requestSchema>;
+type ChatMessage = z.infer<typeof messageSchema>;
+
+/* --------------------------------- POST ----------------------------------- */
 export async function POST(request: NextRequest) {
   try {
-    const { messages, userEmotion } = await request.json();
+    const parsed: ReqBody = requestSchema.parse(await request.json());
 
-    if (!messages || !Array.isArray(messages)) {
-      return NextResponse.json(
-        { error: 'Messages array is required' },
-        { status: 400 }
-      );
-    }
-
-    // Add emotion context if available
+    // Build system prompt with emotion (kept)
     let systemPrompt = SYSTEM_PROMPT;
-    if (userEmotion) {
-      systemPrompt += `\n\nCURRENT USER EMOTION: ${userEmotion.dominant} (confidence: ${userEmotion.confidence}%)
+    if (parsed.userEmotion) {
+      systemPrompt += `
+
+CURRENT USER EMOTION: ${parsed.userEmotion.dominant} (confidence: ${parsed.userEmotion.confidence}%)
 Please adjust your response tone accordingly:
 - If anxious/worried: Be extra reassuring and calming
 - If happy/excited: Match their enthusiasm while staying professional
@@ -68,16 +91,24 @@ Please adjust your response tone accordingly:
 - If angry: Remain calm and understanding, focus on solutions`;
     }
 
-    // Prepare messages for OpenAI
-    const openaiMessages = [
+    // Prepare messages (typed)
+    const openaiMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
       { role: 'system', content: systemPrompt },
-      ...messages.map((msg: any) => ({
-        role: msg.role,
-        content: msg.content
-      }))
+      ...parsed.messages.map((msg: ChatMessage) => {
+        if (msg.role === 'tool') {
+          return {
+            role: 'tool' as const,
+            content: msg.content,
+            tool_call_id: msg.tool_call_id ?? 'inline-tool',
+          };
+        }
+        return { role: msg.role, content: msg.content };
+      }),
     ];
 
-    // Call OpenAI API
+    const openai = getOpenAI();
+
+    // Your model choice preserved
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
       messages: openaiMessages,
@@ -88,39 +119,53 @@ Please adjust your response tone accordingly:
     });
 
     const assistantMessage = completion.choices[0]?.message?.content;
+    if (!assistantMessage) throw new Error('No response from OpenAI');
 
-    if (!assistantMessage) {
-      throw new Error('No response from OpenAI');
-    }
-
-    // Analyze the response for emotion and intent
     const responseAnalysis = await analyzeResponse(assistantMessage);
 
     return NextResponse.json({
       message: assistantMessage,
       analysis: responseAnalysis,
-      usage: completion.usage
+      usage: completion.usage,
     });
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return NextResponse.json(
+        {
+          error: 'Validation failed',
+          details: err.issues.map((i) => ({
+            field: i.path.join('.'),
+            message: i.message,
+          })),
+        },
+        { status: 400 },
+      );
+    }
 
-  } catch (error) {
-    console.error('Chat API Error:', error);
-    
-    // Fallback response for errors
-    const fallbackMessage = "I apologize, but I'm experiencing some technical difficulties right now. Please feel free to call our practice directly at 01273 123456 for immediate assistance, or try again in a moment. Our team is always here to help with your dental needs!";
-    
-    return NextResponse.json({
-      message: fallbackMessage,
-      analysis: {
-        intent: 'error_fallback',
-        confidence: 1.0,
-        suggestedActions: ['call_practice', 'try_again']
+    console.error('Chat API Error:', err);
+
+    const fallbackMessage =
+      "I apologize, but I’m experiencing some technical difficulties right now. Please feel free to call our practice directly at 01273 123456 for immediate assistance, or try again in a moment. Our team is always here to help with your dental needs!";
+
+    return NextResponse.json(
+      {
+        message: fallbackMessage,
+        analysis: {
+          intent: 'error_fallback',
+          confidence: 1.0,
+          suggestedActions: ['call_practice', 'try_again'],
+        },
+        error:
+          process.env.NODE_ENV === 'development'
+            ? (err as Error).message
+            : 'Service temporarily unavailable',
       },
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Service temporarily unavailable'
-    }, { status: 500 });
+      { status: 500 },
+    );
   }
 }
 
-// Analyze assistant response for intent and suggested actions
+/* ------------------------- Response analysis (kept) ------------------------ */
 async function analyzeResponse(message: string) {
   try {
     const analysisPrompt = `Analyze this dental assistant response and determine:
@@ -140,6 +185,7 @@ Return JSON format:
 Possible intents: consultation, emergency, information, booking, treatment_info, anxiety_support, cost_inquiry
 Possible actions: book_consultation, call_emergency, schedule_appointment, learn_more, contact_practice, view_treatments`;
 
+    const openai = getOpenAI();
     const analysis = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: analysisPrompt }],
@@ -152,11 +198,10 @@ Possible actions: book_consultation, call_emergency, schedule_appointment, learn
       try {
         return JSON.parse(result);
       } catch {
-        // Fallback if JSON parsing fails
         return {
           intent: 'information',
           confidence: 0.8,
-          suggestedActions: ['contact_practice']
+          suggestedActions: ['contact_practice'],
         };
       }
     }
@@ -164,20 +209,18 @@ Possible actions: book_consultation, call_emergency, schedule_appointment, learn
     console.error('Response analysis error:', error);
   }
 
-  // Default analysis
   return {
     intent: 'information',
     confidence: 0.8,
-    suggestedActions: ['contact_practice']
+    suggestedActions: ['contact_practice'],
   };
 }
 
-// Health check endpoint
+/* ---------------------------------- GET ----------------------------------- */
 export async function GET() {
   return NextResponse.json({
     status: 'healthy',
     service: 'chat-api',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 }
-
