@@ -3,6 +3,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Pause, Volume2, VolumeX, Maximize, Minimize } from 'lucide-react';
+import { ThemeSwitch } from '@/components/ThemeSwitch';
+// inside your header JSX:
+<ThemeSwitch />
 
 // Brand Colors: Magenta #C2185B, Turquoise #40C4B4, Gold #D4AF37
 // Fonts: Montserrat headings, Lora body text
