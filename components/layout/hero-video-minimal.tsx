@@ -3,9 +3,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Brand Colors: Magenta #C2185B, Turquoise #40C4B4, Gold #D4AF37
-// Fonts: Montserrat headings, Lora body text
-
 export interface MinimalHeroVideoProps {
   videoSrc?: string;
   posterImage?: string;
@@ -49,7 +46,6 @@ export default function MinimalHeroVideo({
 
   return (
     <section className={`relative w-full h-[min(100svh,100vh)] overflow-hidden ${className}`}>
-      {/* Video */}
       <video
         ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover"
@@ -64,14 +60,11 @@ export default function MinimalHeroVideo({
         <source src={videoSrc.replace('.mp4', '.webm')} type="video/webm" />
       </video>
 
-      {/* Subtle overlay */}
       <div
         className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/50"
         style={{ opacity: overlayOpacity }}
-        aria-hidden="true"
       />
 
-      {/* Content */}
       <div className="relative z-10 h-full flex items-center justify-center px-6 text-center">
         <div className="max-w-3xl">
           <motion.h1
@@ -116,7 +109,6 @@ export default function MinimalHeroVideo({
         </div>
       </div>
 
-      {/* Loading veil */}
       <AnimatePresence>
         {!loaded && (
           <motion.div

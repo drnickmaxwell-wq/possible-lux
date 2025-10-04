@@ -5,19 +5,17 @@ import { motion } from 'framer-motion';
 export default function BrandGradient({ className = '' }: { className?: string }) {
   return (
     <div className={className} aria-hidden="true">
-      {/* Radial colour fields (Magenta / Turquoise / Gold) */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(1200px circle at 20% 20%, rgba(194,24,91,0.55), transparent 60%),' + // Magenta
-            'radial-gradient(1000px circle at 80% 30%, rgba(64,196,180,0.45), transparent 60%),' + // Turquoise
-            'radial-gradient(900px circle at 50% 80%, rgba(212,175,55,0.30), transparent 60%),' +  // Gold
+            'radial-gradient(1200px circle at 20% 20%, rgba(194,24,91,0.55), transparent 60%),' +
+            'radial-gradient(1000px circle at 80% 30%, rgba(64,196,180,0.45), transparent 60%),' +
+            'radial-gradient(900px circle at 50% 80%, rgba(212,175,55,0.30), transparent 60%),' +
             'linear-gradient(180deg, rgba(12,18,32,0.10), rgba(12,18,32,0.10))',
         }}
       />
 
-      {/* Slow conic shimmer */}
       <motion.div
         className="absolute inset-0 mix-blend-screen"
         initial={{ rotate: 0 }}
@@ -29,7 +27,6 @@ export default function BrandGradient({ className = '' }: { className?: string }
         }}
       />
 
-      {/* Fine diagonal lines */}
       <div
         className="absolute inset-0 opacity-[0.08]"
         style={{

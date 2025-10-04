@@ -3,9 +3,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
-// Brand Colors: Magenta #C2185B, Turquoise #40C4B4, Gold #D4AF37
-// Fonts: Montserrat headings, Lora body text
-
 export interface SplitHeroVideoProps {
   videoSrc?: string;
   posterImage?: string;
@@ -56,7 +53,6 @@ export default function SplitHeroVideo({
   return (
     <section className={`relative w-full min-h-[min(100svh,720px)] ${className}`}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8 py-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-        {/* Left: Copy */}
         <div>
           <motion.span
             className="inline-block text-sm tracking-wide text-pink-600 dark:text-pink-400"
@@ -92,7 +88,7 @@ export default function SplitHeroVideo({
             </motion.p>
           )}
 
-          {bullets?.length > 0 && (
+          {bullets?.length ? (
             <ul className="mt-6 grid gap-3">
               {bullets.map((b, i) => (
                 <motion.li
@@ -108,7 +104,7 @@ export default function SplitHeroVideo({
                 </motion.li>
               ))}
             </ul>
-          )}
+          ) : null}
 
           <div className="mt-8 flex flex-wrap gap-4">
             <button
@@ -128,7 +124,6 @@ export default function SplitHeroVideo({
           </div>
         </div>
 
-        {/* Right: Video card */}
         <div className="relative rounded-2xl overflow-hidden border border-white/15 shadow-2xl">
           <div className="absolute inset-0 bg-gradient-to-tr from-black/30 to-black/10 pointer-events-none" />
           <video
@@ -144,9 +139,10 @@ export default function SplitHeroVideo({
             <source src={videoSrc} type="video/mp4" />
             <source src={videoSrc.replace('.mp4', '.webm')} type="video/webm" />
           </video>
-          {/* Subtle brand frame */}
-          <div className="pointer-events-none absolute -inset-[2px] rounded-2xl ring-2 ring-transparent"
-               style={{ boxShadow: '0 0 0 1px rgba(210,210,210,0.25), inset 0 0 0 1px rgba(255,255,255,0.06)' }} />
+          <div
+            className="pointer-events-none absolute -inset-[2px] rounded-2xl ring-2 ring-transparent"
+            style={{ boxShadow: '0 0 0 1px rgba(210,210,210,0.25), inset 0 0 0 1px rgba(255,255,255,0.06)' }}
+          />
         </div>
       </div>
     </section>

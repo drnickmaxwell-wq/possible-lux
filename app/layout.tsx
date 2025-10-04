@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import PerformanceOptimizedLayout from '@/components/layout/performance-optimized-layout';
-import ThemeProvider from "@/app/theme-provider";
 
 export const metadata: Metadata = {
   title: "St Mary's House Dental Care | Luxury Coastal Dentistry in Shoreham-by-Sea",

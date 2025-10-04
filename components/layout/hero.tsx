@@ -24,7 +24,6 @@ export default function Hero({
     case 'video-split':
       return <SplitHeroVideo {...props} />;
     default:
-      // Uses your existing 4K hero component (unchanged brand)
       return (
         <FourKHeroVideo
           title={props.title}
