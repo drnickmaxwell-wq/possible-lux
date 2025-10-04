@@ -5,16 +5,25 @@ import Footer from '@/components/layout/footer';
 import Hero from '@/components/layout/hero';
 import BrandGradient from '@/components/effects/brand-gradient';
 
-export default function PreviewLuxPage() {
+import TreatmentsGrid from '@/components/layout/blocks/TreatmentsGrid';
+import TestimonialsBand from '@/components/layout/blocks/TestimonialsBand';
+import FinanceCta from '@/components/layout/blocks/FinanceCta';
+import Tech3DTeaser from '@/components/layout/blocks/Tech3DTeaser';
+import EmergencyStrip from '@/components/layout/blocks/EmergencyStrip';
+import BlogPreview from '@/components/layout/blocks/BlogPreview';
+
+export default function LuxPreviewHomeV3() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white dark:bg-[#0b1220]">
       <StickyHeader />
+
+      {/* HERO with brand gradient */}
       <section className="relative">
         <BrandGradient className="absolute inset-0 -z-10" />
         <Hero
           variant="video-minimal"
-          title="Luxury Preview — St Mary's House"
-          subtitle="This preview page shows the luxury hero, gradient and effects without changing your main site."
+          title="Luxury Coastal Dentistry"
+          subtitle="Advanced, anxiety-free care with 3D digital precision in Shoreham‑by‑Sea."
           ctaText="Book Free Consultation"
           onCtaClick={() => (window.location.href = '/contact')}
           videoSrc="/videos/dental-hero-4k.mp4"
@@ -22,10 +31,18 @@ export default function PreviewLuxPage() {
         />
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 py-20">
-        <h2 className="text-3xl font-bold mb-4" style={{fontFamily: 'Montserrat, sans-serif'}}>Preview-only Enhancements</h2>
-        <p style={{fontFamily: 'Lora, serif'}}>This route is additive only. It imports your existing header/footer and shows the new hero variants and brand gradient for review.</p>
-      </section>
+      {/* Signature luxury bands */}
+      <TreatmentsGrid />
+
+      <TestimonialsBand />
+
+      <FinanceCta />
+
+      <Tech3DTeaser />
+
+      <EmergencyStrip />
+
+      <BlogPreview />
 
       <Footer />
     </main>
