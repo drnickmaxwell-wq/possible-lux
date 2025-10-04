@@ -1,1 +1,1 @@
-// v4.2 placeholder (gradient fallback + wave under hero wired in)
+export default function Page(){return null}
